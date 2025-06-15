@@ -3,36 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة الإشعارات - جامعة النجف</title>
+    <title>لوحة التحكم الشاملة</title>
     <!-- تضمين Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- خطوط إضافية (اختياري) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* الخط الرئيسي */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); /* خلفية خضراء للوحة الإدارة */
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); /* تدرج لوني جميل */
             min-height: 100vh;
             color: #333;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* محاذاة للأعلى لتجنب التوسيط الكامل عند وجود محتوى طويل */
             padding: 20px;
             overflow-x: hidden;
         }
 
-        /* حاوية لوحة الإدارة */
+        /* حاوية لوحة الإدارة الرئيسية */
         .admin-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            max-width: 600px;
+            max-width: 800px; /* عرض أوسع لاستيعاب الأقسام المتعددة */
             width: 100%;
             text-align: right;
         }
 
-        /* حاوية المودال المخصص (لصناديق الرسائل) */
+        /* حاوية المودال المخصص (لصناديق الرسائل والتأكيد) */
         .custom-modal-container {
             position: fixed;
             top: 0;
@@ -64,20 +66,19 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            text-align: right; /* محاذاة كل محتوى المودال لليمين */
         }
 
         .message-box-title {
             font-size: 20px;
             font-weight: bold;
             color: #333;
-            text-align: right;
         }
 
         .message-box-body {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            text-align: right;
         }
 
         .message-box-button {
@@ -96,8 +97,7 @@
 
         /* حقول الإدخال */
         input[type="text"],
-        textarea,
-        input[type="file"] {
+        textarea {
             width: 100%;
             padding: 12px;
             border-radius: 10px;
@@ -114,7 +114,7 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
 
-        /* الأزرار */
+        /* الأزرار العامة */
         .btn {
             padding: 12px 20px;
             border-radius: 10px;
@@ -122,26 +122,26 @@
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.2s ease, transform 0.2s ease;
-            min-width: 120px;
+            min-width: 100px;
         }
 
         .btn-primary {
-            background-color: #4CAF50; /* Green */
+            background-color: #4f46e5; /* Indigo */
             color: white;
         }
-        .btn-primary:hover { background-color: #45a049; transform: translateY(-1px); }
+        .btn-primary:hover { background-color: #6366f1; transform: translateY(-1px); }
 
         .btn-info {
-            background-color: #2196F3; /* Blue */
+            background-color: #0ea5e9; /* Sky blue */
             color: white;
         }
-        .btn-info:hover { background-color: #0b7dda; transform: translateY(-1px); }
+        .btn-info:hover { background-color: #0284c7; transform: translateY(-1px); }
 
         .btn-danger {
-            background-color: #f44336; /* Red */
+            background-color: #ef4444; /* Red */
             color: white;
         }
-        .btn-danger:hover { background-color: #da190b; transform: translateY(-1px); }
+        .btn-danger:hover { background-color: #dc2626; transform: translateY(-1px); }
 
         .btn-secondary {
             background-color: #e2e8f0; /* Gray-200 */
@@ -149,8 +149,14 @@
         }
         .btn-secondary:hover { background-color: #cbd5e0; transform: translateY(-1px); }
 
-        /* قائمة الإشعارات */
-        .notifications-list {
+        /* الأزرار الصغيرة داخل القوائم */
+        .item-actions .btn {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        /* قوائم العناصر (إشعارات، محاضرات، قنوات) */
+        .items-list {
             background-color: white;
             border-radius: 15px;
             padding: 20px;
@@ -158,78 +164,102 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
-        .notification-item {
+        .item-entry {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 0;
             border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap; /* للسماح بالعناصر بالانتقال إلى سطر جديد على الشاشات الصغيرة */
         }
-        .notification-item:last-child {
+        .item-entry:last-child {
             border-bottom: none;
         }
 
-        .notification-content {
+        .item-content {
             flex-grow: 1;
-            margin-left: 15px;
+            margin-left: 15px; /* مسافة من الأزرار على اليسار */
+            text-align: right;
+            min-width: 200px; /* لضمان عدم ضغط المحتوى بشكل كبير */
         }
 
-        .notification-title {
+        .item-title {
             font-size: 16px;
             font-weight: bold;
             color: #333;
             margin-bottom: 4px;
         }
 
-        .notification-description {
+        .item-description,
+        .item-details {
             font-size: 14px;
             color: #555;
             margin-bottom: 4px;
         }
-
-        .notification-image-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            object-fit: cover;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .item-details span {
+            font-weight: bold; /* لجعل اسم المحاضر سميكاً */
+            color: #2d3748; /* لون أغمق للمحاضر */
         }
 
-        .notification-item .notification-image-display {
-            width: 50px;
-            height: 50px;
-            border-radius: 6px;
-            object-fit: cover;
-            margin-right: 15px; /* مسافة بين الصورة والمحتوى */
-            border: 1px solid #eee;
-        }
-
-        .notification-actions {
-            display: flex;
-            gap: 8px;
-        }
-        .notification-actions .btn {
-            padding: 8px 12px;
-            font-size: 13px;
-        }
         .loading-text {
             color: #718096;
             text-align: center;
             padding: 20px;
             font-size: 16px;
         }
+
+        /* تنسيقات الألسنة (Tabs) */
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #718096;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tab-button.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        .tab-button:hover {
+            color: #4f46e5;
+        }
+
+        .tab-content {
+            display: none;
+            padding-top: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="font-inter">
     <div class="admin-container">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">إدارة الإشعارات</h1>
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">لوحة التحكم الشاملة</h1>
 
-        <!-- قسم إضافة/تعديل الإشعار -->
-        <div class="form-section bg-white p-6 rounded-xl shadow-md mb-6">
+        <!-- الألسنة (Tabs) للتنقل بين الأقسام -->
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="notifications">الإشعارات</button>
+            <button class="tab-button" data-tab="lectures">المحاضرات</button>
+            <button class="tab-button" data-tab="channels_groups">القنوات والمجموعات</button>
+        </div>
+
+        <!-- قسم إدارة الإشعارات -->
+        <div id="notifications" class="tab-content active">
             <h2 class="text-2xl font-semibold text-gray-800 mb-5 border-b pb-3 border-gray-200">
-                <span id="formTitle">إضافة إشعار جديد</span>
+                <span id="notificationFormTitle">إضافة إشعار جديد</span>
             </h2>
             <input type="hidden" id="notificationDocId">
 
@@ -241,24 +271,79 @@
                 <label for="notificationDescription" class="block text-gray-700 text-sm font-bold mb-2">الوصف:</label>
                 <textarea id="notificationDescription" rows="3" placeholder="وصف مفصل للإشعار" required></textarea>
             </div>
-            <div class="mb-4">
-                <label for="notificationImage" class="block text-gray-700 text-sm font-bold mb-2">الصورة (اختياري):</label>
-                <input type="file" id="notificationImage" accept="image/*">
-                <img id="imagePreview" class="notification-image-preview mt-3 hidden" src="#" alt="Image Preview">
-            </div>
+            <!-- تم إزالة حقل التاريخ وحقل الصورة -->
 
             <div class="flex justify-end gap-3">
                 <button id="addNotificationBtn" class="btn btn-primary">إضافة إشعار</button>
                 <button id="updateNotificationBtn" class="btn btn-info hidden">تحديث الإشعار</button>
-                <button id="cancelEditBtn" class="btn btn-secondary hidden">إلغاء</button>
+                <button id="cancelNotificationEditBtn" class="btn btn-secondary hidden">إلغاء</button>
+            </div>
+
+            <div class="notifications-list items-list">
+                <div class="loading-text">جاري تحميل الإشعارات...</div>
             </div>
         </div>
 
-        <!-- قسم قائمة الإشعارات -->
-        <div class="notifications-list-section">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-5 border-b pb-3 border-gray-200">جميع الإشعارات</h2>
-            <div id="notificationsDisplay" class="notifications-list">
-                <div class="loading-text">جاري تحميل الإشعارات...</div>
+        <!-- قسم إدارة المحاضرات -->
+        <div id="lectures" class="tab-content">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-5 border-b pb-3 border-gray-200">
+                <span id="lectureFormTitle">إضافة محاضرة جديدة</span>
+            </h2>
+            <input type="hidden" id="lectureDocId">
+
+            <div class="mb-4">
+                <label for="lectureName" class="block text-gray-700 text-sm font-bold mb-2">اسم المحاضرة:</label>
+                <input type="text" id="lectureName" placeholder="اسم المحاضرة" required>
+            </div>
+            <div class="mb-4">
+                <label for="lecturer" class="block text-gray-700 text-sm font-bold mb-2">المحاضر:</label>
+                <input type="text" id="lecturer" placeholder="اسم المحاضر" required>
+            </div>
+            <!-- تم إزالة حقلي التاريخ والحالة -->
+            <div class="mb-4">
+                <label for="lectureLink" class="block text-gray-700 text-sm font-bold mb-2">الرابط (اختياري):</label>
+                <input type="text" id="lectureLink" placeholder="رابط المحاضرة (URL)">
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button id="addLectureBtn" class="btn btn-primary">إضافة محاضرة</button>
+                <button id="updateLectureBtn" class="btn btn-info hidden">تحديث المحاضرة</button>
+                <button id="cancelLectureEditBtn" class="btn btn-secondary hidden">إلغاء</button>
+            </div>
+
+            <div class="lectures-list items-list">
+                <div class="loading-text">جاري تحميل المحاضرات...</div>
+            </div>
+        </div>
+
+        <!-- قسم إدارة القنوات والمجموعات -->
+        <div id="channels_groups" class="tab-content">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-5 border-b pb-3 border-gray-200">
+                <span id="channelGroupFormTitle">إضافة قناة/مجموعة جديدة</span>
+            </h2>
+            <input type="hidden" id="channelGroupDocId">
+
+            <div class="mb-4">
+                <label for="channelGroupName" class="block text-gray-700 text-sm font-bold mb-2">الاسم:</label>
+                <input type="text" id="channelGroupName" placeholder="اسم القناة/المجموعة" required>
+            </div>
+            <div class="mb-4">
+                <label for="channelGroupDescription" class="block text-gray-700 text-sm font-bold mb-2">الوصف:</label>
+                <textarea id="channelGroupDescription" rows="3" placeholder="وصف للقناة/المجموعة" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="channelGroupLink" class="block text-gray-700 text-sm font-bold mb-2">الرابط (URL):</label>
+                <input type="text" id="channelGroupLink" placeholder="رابط الانضمام للقناة/المجموعة" required>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button id="addChannelGroupBtn" class="btn btn-primary">إضافة قناة/مجموعة</button>
+                <button id="updateChannelGroupBtn" class="btn btn-info hidden">تحديث قناة/مجموعة</button>
+                <button id="cancelChannelGroupEditBtn" class="btn btn-secondary hidden">إلغاء</button>
+            </div>
+
+            <div class="channels-groups-list items-list">
+                <div class="loading-text">جاري تحميل القنوات والمجموعات...</div>
             </div>
         </div>
     </div>
@@ -274,8 +359,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
-        // استيراد وظائف Firebase Storage
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-storage.js";
+        // تم إزالة استيراد Firebase Storage حيث لم تعد هناك حاجة له لرفع الصور
 
 
         // Firebase Configuration (تأكد من مطابقتها لإعدادات مشروعك)
@@ -293,362 +377,603 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const storage = getStorage(app); // تهيئة Firebase Storage
-        let userId = null; // سيتم تحديثه بعد المصادقة المجهولة
+        let userId = null; 
 
-        // عناصر DOM
-        const formTitle = document.getElementById('formTitle');
-        const notificationDocId = document.getElementById('notificationDocId');
-        const notificationTitleInput = document.getElementById('notificationTitle');
-        const notificationDescriptionInput = document.getElementById('notificationDescription');
-        const notificationImageInput = document.getElementById('notificationImage'); // حقل رفع الصورة الجديد
-        const imagePreview = document.getElementById('imagePreview'); // معاينة الصورة الجديد
-        const addNotificationBtn = document.getElementById('addNotificationBtn');
-        const updateNotificationBtn = document.getElementById('updateNotificationBtn');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const notificationsDisplay = document.getElementById('notificationsDisplay');
+        // عناصر DOM للمودال
+        const customModalContainer = document.getElementById('customModalContainer');
+        const customModalContent = document.getElementById('customModalContent');
 
         // وظائف المودال (صندوق الرسائل)
-        function openCustomModal(title, contentHtml, onConfirm = null, onCancel = null) {
-            const container = document.getElementById('customModalContainer');
-            const modalContentDiv = document.getElementById('customModalContent');
-
+        function openCustomModal(title, contentHtml, onConfirm = null) {
             let buttonsHtml = '';
-            if (onConfirm && onCancel) {
+            if (onConfirm) { // فقط زر تأكيد إذا كان هناك إجراء يتطلب تأكيد
                 buttonsHtml = `
                     <div class="flex justify-around mt-4">
-                        <button id="confirmActionBtn" class="btn btn-primary">تأكيد النشر</button>
+                        <button id="confirmActionBtn" class="btn btn-primary">تأكيد</button>
                         <button id="cancelActionBtn" class="btn btn-secondary">إلغاء</button>
                     </div>
                 `;
-            } else {
+            } else { // زر موافق فقط لرسائل المعلومات
                 buttonsHtml = `<button class="message-box-button" id="customModalCloseButton">موافق</button>`;
             }
 
-            modalContentDiv.innerHTML = `
+            customModalContent.innerHTML = `
                 <div class="message-box-title">${title}</div>
                 <div class="message-box-body">${contentHtml}</div>
                 ${buttonsHtml}
             `;
-            container.classList.add('show');
+            customModalContainer.classList.add('show');
 
-            if (onConfirm && onCancel) {
+            if (onConfirm) {
                 document.getElementById('confirmActionBtn').onclick = () => {
                     closeCustomModal();
                     onConfirm();
                 };
                 document.getElementById('cancelActionBtn').onclick = () => {
                     closeCustomModal();
-                    if (onCancel) onCancel();
+                    // لا يوجد onCancel callback محدد هنا
                 };
             } else {
                 document.getElementById('customModalCloseButton').onclick = () => {
                     closeCustomModal();
                 };
             }
-            container.onclick = (e) => {
-                if (e.target === container) {
+            customModalContainer.onclick = (e) => {
+                if (e.target === customModalContainer) {
                     closeCustomModal();
                 }
             };
         }
 
         function closeCustomModal() {
-            document.getElementById('customModalContainer').classList.remove('show');
-            document.getElementById('customModalContent').innerHTML = '';
+            customModalContainer.classList.remove('show');
+            customModalContent.innerHTML = '';
         }
 
         function showMessageBox(title, message) {
             openCustomModal(title, `<div class="message-box-content">${message}</div>`);
         }
 
-        // وظيفة مسح حقول النموذج وإعادة ضبط الأزرار
-        function clearForm() {
-            notificationDocId.value = '';
+        // ===============================================
+        //           إدارة الإشعارات (Notifications)
+        // ===============================================
+
+        // عناصر DOM لإدارة الإشعارات
+        const notificationFormTitle = document.getElementById('notificationFormTitle');
+        const notificationDocIdInput = document.getElementById('notificationDocId');
+        const notificationTitleInput = document.getElementById('notificationTitle');
+        const notificationDescriptionInput = document.getElementById('notificationDescription');
+        // تم إزالة notificationDateInput, notificationImageInput, notificationImagePreview
+        const addNotificationBtn = document.getElementById('addNotificationBtn');
+        const updateNotificationBtn = document.getElementById('updateNotificationBtn');
+        const cancelNotificationEditBtn = document.getElementById('cancelNotificationEditBtn');
+        const notificationsDisplayDiv = document.querySelector('#notifications .notifications-list');
+
+        // مسح نموذج الإشعارات
+        function clearNotificationForm() {
+            notificationDocIdInput.value = '';
             notificationTitleInput.value = '';
             notificationDescriptionInput.value = '';
-            notificationImageInput.value = ''; // مسح حقل الصورة
-            imagePreview.src = '#'; // مسح معاينة الصورة
-            imagePreview.classList.add('hidden'); // إخفاء معاينة الصورة
-            formTitle.textContent = 'إضافة إشعار جديد';
+            // تم إزالة مسح notificationDateInput, notificationImageInput, notificationImagePreview
+            notificationFormTitle.textContent = 'إضافة إشعار جديد';
             addNotificationBtn.classList.remove('hidden');
             updateNotificationBtn.classList.add('hidden');
-            cancelEditBtn.classList.add('hidden');
+            cancelNotificationEditBtn.classList.add('hidden');
         }
 
-        // وظيفة رفع الصورة إلى Firebase Storage
-        async function uploadImage(file, notificationId = null) {
-            if (!file) return null;
-
-            // تحديد مسار التخزين: notifications_images/{notification_doc_id}/{filename}
-            // إذا كان notificationId غير موجود (إضافة جديدة)، استخدم timestamp لإنشاء مسار فريد مبدئي
-            const storagePath = notificationId 
-                ? `notifications_images/${notificationId}/${file.name}`
-                : `notifications_images/temp_${new Date().getTime()}_${file.name}`;
-            
-            const imageRef = ref(storage, storagePath);
-            await uploadBytes(imageRef, file);
-            const imageUrl = await getDownloadURL(imageRef);
-            return imageUrl;
+        // ملء نموذج الإشعارات للتعديل
+        function populateNotificationEditForm(notification) {
+            notificationFormTitle.textContent = 'تعديل الإشعار';
+            notificationDocIdInput.value = notification.id;
+            notificationTitleInput.value = notification.title || '';
+            notificationDescriptionInput.value = notification.description || '';
+            // تم إزالة ملء notificationDateInput, notificationImageInput, imagePreview
+            addNotificationBtn.classList.add('hidden');
+            updateNotificationBtn.classList.remove('hidden');
+            cancelNotificationEditBtn.classList.remove('hidden');
         }
 
-        // جلب الإشعارات وعرضها
+        // جلب وعرض الإشعارات
         async function fetchNotifications() {
-            notificationsDisplay.innerHTML = '<div class="loading-text">جاري تحميل الإشعارات...</div>';
+            notificationsDisplayDiv.innerHTML = '<div class="loading-text">جاري تحميل الإشعارات...</div>';
             try {
-                // التأكد من تسجيل الدخول المجهول
                 if (!userId) {
                     await signInAnonymously(auth);
                     userId = auth.currentUser.uid;
-                    console.log("تم تسجيل الدخول كمستخدم مجهول. معرف المستخدم:", userId);
                 }
-
-                const notificationsCol = collection(db, 'notifications');
-                const q = query(notificationsCol, orderBy('timestamp', 'desc'));
+                const colRef = collection(db, 'notifications');
+                const q = query(colRef, orderBy('timestamp', 'desc'));
                 const snapshot = await getDocs(q);
-                const notificationsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                notificationsDisplay.innerHTML = ''; // مسح رسالة التحميل
-
-                if (notificationsData.length === 0) {
-                    notificationsDisplay.innerHTML = '<div class="text-center text-gray-500 py-4">لا توجد إشعارات حالياً في قاعدة البيانات.</div>';
+                notificationsDisplayDiv.innerHTML = '';
+                if (data.length === 0) {
+                    notificationsDisplayDiv.innerHTML = '<div class="text-center text-gray-500 py-4">لا توجد إشعارات حالياً.</div>';
                     return;
                 }
 
-                notificationsData.forEach(notification => {
-                    const item = document.createElement('div');
-                    item.classList.add('notification-item');
-                    
-                    let imageHtml = '';
-                    if (notification.imageUrl) {
-                        imageHtml = `<img src="${notification.imageUrl}" alt="صورة الإشعار" class="notification-image-display">`;
-                    }
-
-                    item.innerHTML = `
-                        ${imageHtml}
-                        <div class="notification-content">
-                            <div class="notification-title">${notification.title || 'لا يوجد عنوان'}</div>
-                            <div class="notification-description">${notification.description || notification.message || 'لا يوجد وصف'}</div>
+                data.forEach(item => {
+                    const el = document.createElement('div');
+                    el.classList.add('item-entry');
+                    el.innerHTML = `
+                        <div class="item-content">
+                            <div class="item-title">${item.title || ''}</div>
+                            <div class="item-description">${item.description || ''}</div>
+                            <!-- تم إزالة عرض حقل التاريخ والصورة -->
                         </div>
-                        <div class="notification-actions">
-                            <button class="btn btn-info edit-btn" data-id="${notification.id}">تعديل</button>
-                            <button class="btn btn-danger delete-btn" data-id="${notification.id}">حذف</button>
+                        <div class="item-actions flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
+                            <button class="btn btn-info edit-btn" data-id="${item.id}">تعديل</button>
+                            <button class="btn btn-danger delete-btn" data-id="${item.id}">حذف</button>
                         </div>
                     `;
-                    notificationsDisplay.appendChild(item);
-
-                    // ربط أحداث الأزرار داخل كل عنصر
-                    item.querySelector('.edit-btn').addEventListener('click', () => populateEditForm(notification));
-                    item.querySelector('.delete-btn').addEventListener('click', () => deleteNotification(notification.id));
+                    el.querySelector('.edit-btn').addEventListener('click', () => populateNotificationEditForm(item));
+                    el.querySelector('.delete-btn').addEventListener('click', () => deleteNotification(item.id));
+                    notificationsDisplayDiv.appendChild(el);
                 });
-
             } catch (error) {
                 console.error("خطأ في جلب الإشعارات:", error);
                 showMessageBox('خطأ', 'فشل جلب الإشعارات: ' + error.message);
-                notificationsDisplay.innerHTML = `<div class="text-center text-red-500 py-4">فشل تحميل الإشعارات. الرجاء التأكد من إعداد Firebase الخاص بك وقواعد الأمان.</div>`;
             }
         }
 
-        // ملء النموذج ببيانات الإشعار للتعديل
-        function populateEditForm(notification) {
-            formTitle.textContent = 'تعديل الإشعار';
-            notificationDocId.value = notification.id;
-            notificationTitleInput.value = notification.title || '';
-            notificationDescriptionInput.value = notification.description || notification.message || '';
-            
-            // عرض الصورة الحالية للمعاينة
-            if (notification.imageUrl) {
-                imagePreview.src = notification.imageUrl;
-                imagePreview.classList.remove('hidden');
-            } else {
-                imagePreview.src = '#';
-                imagePreview.classList.add('hidden');
-            }
-
-            notificationImageInput.value = ''; // مسح اختيار الملف ليتمكن المستخدم من اختيار ملف جديد
-            addNotificationBtn.classList.add('hidden');
-            updateNotificationBtn.classList.remove('hidden');
-            cancelEditBtn.classList.remove('hidden');
-        }
-
-        // إضافة إشعار جديد مع تأكيد
+        // إضافة إشعار
         async function addNotification() {
             const title = notificationTitleInput.value.trim();
             const description = notificationDescriptionInput.value.trim();
-            const imageFile = notificationImageInput.files[0];
 
             if (!title || !description) {
-                showMessageBox('خطأ', 'الرجاء ملء حقل العنوان والوصف.');
+                showMessageBox('خطأ', 'الرجاء ملء حقول العنوان والوصف.');
                 return;
             }
 
-            let confirmImageHtml = '';
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    confirmImageHtml = `<img src="${e.target.result}" class="notification-image-preview mx-auto my-3" alt="صورة معاينة">`;
-                    displayConfirmationModal(title, description, confirmImageHtml, imageFile);
-                };
-                reader.readAsDataURL(imageFile);
-            } else {
-                displayConfirmationModal(title, description, confirmImageHtml, null);
-            }
-        }
-
-        async function displayConfirmationModal(title, description, imageHtml, imageFile) {
-            const confirmContent = `
-                <p>هل أنت متأكد من أنك تريد نشر هذا الإشعار؟</p>
-                ${imageHtml}
-                <p><strong>العنوان:</strong> ${title}</p>
-                <p><strong>الوصف:</strong> ${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
-            `;
-
-            openCustomModal('تأكيد النشر', confirmContent, async () => {
-                // User confirmed
+            openCustomModal('تأكيد الإضافة', 'هل أنت متأكد من أنك تريد إضافة هذا الإشعار؟', async () => {
                 try {
-                    let imageUrl = null;
-                    // إضافة المستند أولاً للحصول على ID
-                    const newDocRef = await addDoc(collection(db, 'notifications'), {
+                    await addDoc(collection(db, 'notifications'), {
                         title,
                         description,
                         timestamp: new Date()
                     });
-
-                    // إذا كانت هناك صورة، ارفعها باستخدام ID المستند الجديد
-                    if (imageFile) {
-                        imageUrl = await uploadImage(imageFile, newDocRef.id);
-                        // ثم قم بتحديث المستند بالرابط
-                        await updateDoc(newDocRef, { imageUrl: imageUrl });
-                    }
-
-                    showMessageBox('نجاح', 'تمت إضافة الإشعار ونشره بنجاح!');
-                    clearForm();
+                    showMessageBox('نجاح', 'تمت إضافة الإشعار بنجاح!');
+                    clearNotificationForm();
                     fetchNotifications();
                 } catch (error) {
                     console.error("خطأ في إضافة الإشعار:", error);
                     showMessageBox('خطأ', 'فشل إضافة الإشعار: ' + error.message);
                 }
-            }, () => {
-                showMessageBox('إلغاء', 'تم إلغاء عملية النشر.');
             });
         }
 
-        // تحديث إشعار موجود مع تأكيد
+        // تحديث إشعار
         async function updateNotification() {
-            const docId = notificationDocId.value;
+            const docId = notificationDocIdInput.value;
             const title = notificationTitleInput.value.trim();
             const description = notificationDescriptionInput.value.trim();
-            const imageFile = notificationImageInput.files[0];
 
             if (!docId || !title || !description) {
-                showMessageBox('خطأ', 'الرجاء ملء حقل العنوان والوصف ومعرف المستند.');
+                showMessageBox('خطأ', 'الرجاء ملء حقول العنوان والوصف ومعرف المستند.');
                 return;
             }
 
-            // للتحقق من الصورة الحالية أو الجديدة للعرض في التأكيد
-            let currentOrNewImageUrl = imagePreview.src;
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const confirmImageHtml = `<img src="${e.target.result}" class="notification-image-preview mx-auto my-3" alt="صورة معاينة">`;
-                    displayUpdateConfirmationModal(docId, title, description, confirmImageHtml, imageFile);
-                };
-                reader.readAsDataURL(imageFile);
-            } else {
-                const confirmImageHtml = currentOrNewImageUrl && currentOrNewImageUrl !== '#' 
-                    ? `<img src="${currentOrNewImageUrl}" class="notification-image-preview mx-auto my-3" alt="صورة معاينة">` 
-                    : '';
-                displayUpdateConfirmationModal(docId, title, description, confirmImageHtml, null);
-            }
-        }
-
-        async function displayUpdateConfirmationModal(docId, title, description, imageHtml, imageFile) {
-            const confirmContent = `
-                <p>هل أنت متأكد من أنك تريد تحديث هذا الإشعار ونشره؟</p>
-                ${imageHtml}
-                <p><strong>العنوان:</strong> ${title}</p>
-                <p><strong>الوصف:</strong> ${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</p>
-            `;
-
-            openCustomModal('تأكيد التحديث', confirmContent, async () => {
-                // User confirmed
+            openCustomModal('تأكيد التحديث', 'هل أنت متأكد من أنك تريد تحديث هذا الإشعار؟', async () => {
                 try {
-                    let imageUrl = null;
-                    if (imageFile) {
-                        imageUrl = await uploadImage(imageFile, docId);
-                    } else {
-                        // إذا لم يتم اختيار ملف جديد، احتفظ بالرابط الحالي إذا كان موجودًا
-                        imageUrl = imagePreview.src !== '#' ? imagePreview.src : null;
-                    }
-
                     const updateData = { title, description };
-                    if (imageUrl) {
-                        updateData.imageUrl = imageUrl;
-                    } else if (imageFile === null && notificationImageInput.value === '') { // إذا قام المستخدم بمسح الصورة الحالية
-                        updateData.imageUrl = null;
-                    }
-
                     await updateDoc(doc(db, 'notifications', docId), updateData);
-                    showMessageBox('نجاح', 'تم تحديث الإشعار ونشره بنجاح!');
-                    clearForm();
+                    showMessageBox('نجاح', 'تم تحديث الإشعار بنجاح!');
+                    clearNotificationForm();
                     fetchNotifications();
                 } catch (error) {
                     console.error("خطأ في تحديث الإشعار:", error);
                     showMessageBox('خطأ', 'فشل تحديث الإشعار: ' + error.message);
                 }
-            }, () => {
-                showMessageBox('إلغاء', 'تم إلغاء عملية التحديث.');
             });
         }
 
-        // حذف إشعار (مع تأكيد مسبقاً)
+        // حذف إشعار
         async function deleteNotification(docId) {
-            openCustomModal('تأكيد الحذف', `هل أنت متأكد أنك تريد حذف هذا الإشعار؟
-                <div class="flex justify-around mt-4">
-                    <button id="confirmDeleteBtn" class="btn btn-danger">نعم، احذف</button>
-                    <button id="cancelDeleteBtn" class="btn btn-secondary">إلغاء</button>
-                </div>
-            `);
-
-            document.getElementById('confirmDeleteBtn').onclick = async () => {
-                closeCustomModal();
+            openCustomModal('تأكيد الحذف', 'هل أنت متأكد من أنك تريد حذف هذا الإشعار؟', async () => {
                 try {
                     await deleteDoc(doc(db, 'notifications', docId));
                     showMessageBox('نجاح', 'تم حذف الإشعار بنجاح!');
-                    fetchNotifications(); // تحديث القائمة
+                    fetchNotifications();
                 } catch (error) {
                     console.error("خطأ في حذف الإشعار:", error);
                     showMessageBox('خطأ', 'فشل حذف الإشعار: ' + error.message);
                 }
-            };
-            document.getElementById('cancelDeleteBtn').onclick = () => closeCustomModal();
+            });
         }
 
-        // عرض معاينة الصورة عند اختيار ملف
-        notificationImageInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.src = '#';
-                imagePreview.classList.add('hidden');
+        // تم إزالة معالج حدث معاينة الصورة
+
+
+        // ===============================================
+        //           إدارة المحاضرات (Lectures)
+        // ===============================================
+
+        // عناصر DOM لإدارة المحاضرات
+        const lectureFormTitle = document.getElementById('lectureFormTitle');
+        const lectureDocIdInput = document.getElementById('lectureDocId');
+        const lectureNameInput = document.getElementById('lectureName');
+        const lecturerInput = document.getElementById('lecturer');
+        // تم إزالة lectureDateInput, lectureStatusInput
+        const lectureLinkInput = document.getElementById('lectureLink');
+        const addLectureBtn = document.getElementById('addLectureBtn');
+        const updateLectureBtn = document.getElementById('updateLectureBtn');
+        const cancelLectureEditBtn = document.getElementById('cancelLectureEditBtn');
+        const lecturesDisplayDiv = document.querySelector('#lectures .lectures-list');
+
+        // مسح نموذج المحاضرات
+        function clearLectureForm() {
+            lectureDocIdInput.value = '';
+            lectureNameInput.value = '';
+            lecturerInput.value = '';
+            // تم إزالة مسح lectureDateInput, lectureStatusInput
+            lectureLinkInput.value = '';
+            lectureFormTitle.textContent = 'إضافة محاضرة جديدة';
+            addLectureBtn.classList.remove('hidden');
+            updateLectureBtn.classList.add('hidden');
+            cancelLectureEditBtn.classList.add('hidden');
+        }
+
+        // ملء نموذج المحاضرات للتعديل
+        function populateLectureEditForm(lecture) {
+            lectureFormTitle.textContent = 'تعديل المحاضرة';
+            lectureDocIdInput.value = lecture.id;
+            lectureNameInput.value = lecture.name || '';
+            lecturerInput.value = lecture.lecturer || '';
+            // تم إزالة ملء lectureDateInput, lectureStatusInput
+            lectureLinkInput.value = lecture.link || '';
+            addLectureBtn.classList.add('hidden');
+            updateLectureBtn.classList.remove('hidden');
+            cancelLectureEditBtn.classList.remove('hidden');
+        }
+
+        // جلب وعرض المحاضرات
+        async function fetchLectures() {
+            lecturesDisplayDiv.innerHTML = '<div class="loading-text">جاري تحميل المحاضرات...</div>';
+            try {
+                if (!userId) {
+                    await signInAnonymously(auth);
+                    userId = auth.currentUser.uid;
+                }
+                const colRef = collection(db, 'lectures');
+                const q = query(colRef, orderBy('timestamp', 'desc'));
+                const snapshot = await getDocs(q);
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                lecturesDisplayDiv.innerHTML = '';
+                if (data.length === 0) {
+                    lecturesDisplayDiv.innerHTML = '<div class="text-center text-gray-500 py-4">لا توجد محاضرات حالياً.</div>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const el = document.createElement('div');
+                    el.classList.add('item-entry');
+                    el.innerHTML = `
+                        <div class="item-content">
+                            <div class="item-title">${item.name || ''}</div>
+                            <div class="item-details"><span class="lecturer-name">${item.lecturer || ''}</span></div>
+                            ${item.link ? `<div class="item-details"><a href="${item.link}" target="_blank" class="text-blue-500 hover:underline">الرابط</a></div>` : ''}
+                        </div>
+                        <div class="item-actions flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
+                            <button class="btn btn-info edit-btn" data-id="${item.id}">تعديل</button>
+                            <button class="btn btn-danger delete-btn" data-id="${item.id}">حذف</button>
+                        </div>
+                    `;
+                    el.querySelector('.edit-btn').addEventListener('click', () => populateLectureEditForm(item));
+                    el.querySelector('.delete-btn').addEventListener('click', () => deleteLecture(item.id));
+                    lecturesDisplayDiv.appendChild(el);
+                });
+            } catch (error) {
+                console.error("خطأ في جلب المحاضرات:", error);
+                showMessageBox('خطأ', 'فشل جلب المحاضرات: ' + error.message);
             }
+        }
+
+        // إضافة محاضرة
+        async function addLecture() {
+            const name = lectureNameInput.value.trim();
+            const lecturer = lecturerInput.value.trim();
+            const link = lectureLinkInput.value.trim();
+
+            if (!name || !lecturer) {
+                showMessageBox('خطأ', 'الرجاء ملء حقول اسم المحاضرة والمحاضر.');
+                return;
+            }
+
+            openCustomModal('تأكيد الإضافة', 'هل أنت متأكد من أنك تريد إضافة هذه المحاضرة؟', async () => {
+                try {
+                    await addDoc(collection(db, 'lectures'), {
+                        name,
+                        lecturer,
+                        link,
+                        timestamp: new Date()
+                    });
+                    showMessageBox('نجاح', 'تمت إضافة المحاضرة بنجاح!');
+                    clearLectureForm();
+                    fetchLectures();
+                } catch (error) {
+                    console.error("خطأ في إضافة المحاضرة:", error);
+                    showMessageBox('خطأ', 'فشل إضافة المحاضرة: ' + error.message);
+                }
+            });
+        }
+
+        // تحديث محاضرة
+        async function updateLecture() {
+            const docId = lectureDocIdInput.value;
+            const name = lectureNameInput.value.trim();
+            const lecturer = lecturerInput.value.trim();
+            const link = lectureLinkInput.value.trim();
+
+            if (!docId || !name || !lecturer) {
+                showMessageBox('خطأ', 'الرجاء ملء حقول اسم المحاضرة والمحاضر ومعرف المستند.');
+                return;
+            }
+
+            openCustomModal('تأكيد التحديث', 'هل أنت متأكد من أنك تريد تحديث هذه المحاضرة؟', async () => {
+                try {
+                    await updateDoc(doc(db, 'lectures', docId), {
+                        name,
+                        lecturer,
+                        link
+                    });
+                    showMessageBox('نجاح', 'تم تحديث المحاضرة بنجاح!');
+                    clearLectureForm();
+                    fetchLectures();
+                } catch (error) {
+                    console.error("خطأ في تحديث المحاضرة:", error);
+                    showMessageBox('خطأ', 'فشل تحديث المحاضرة: ' + error.message);
+                }
+            });
+        }
+
+        // حذف محاضرة
+        async function deleteLecture(docId) {
+            openCustomModal('تأكيد الحذف', 'هل أنت متأكد من أنك تريد حذف هذه المحاضرة؟', async () => {
+                try {
+                    await deleteDoc(doc(db, 'lectures', docId));
+                    showMessageBox('نجاح', 'تم حذف المحاضرة بنجاح!');
+                    fetchLectures();
+                } catch (error) {
+                    console.error("خطأ في حذف المحاضرة:", error);
+                    showMessageBox('خطأ', 'فشل حذف المحاضرة: ' + error.message);
+                }
+            });
+        }
+
+
+        // ===============================================
+        //           إدارة القنوات والمجموعات
+        // ===============================================
+
+        // عناصر DOM لإدارة القنوات والمجموعات
+        const channelGroupFormTitle = document.getElementById('channelGroupFormTitle');
+        const channelGroupDocIdInput = document.getElementById('channelGroupDocId');
+        const channelGroupNameInput = document.getElementById('channelGroupName');
+        const channelGroupDescriptionInput = document.getElementById('channelGroupDescription');
+        const channelGroupLinkInput = document.getElementById('channelGroupLink');
+        const addChannelGroupBtn = document.getElementById('addChannelGroupBtn');
+        const updateChannelGroupBtn = document.getElementById('updateChannelGroupBtn');
+        const cancelChannelGroupEditBtn = document.getElementById('cancelChannelGroupEditBtn');
+        const channelsGroupsDisplayDiv = document.querySelector('#channels_groups .channels-groups-list');
+
+        // مسح نموذج القنوات والمجموعات
+        function clearChannelGroupForm() {
+            channelGroupDocIdInput.value = '';
+            channelGroupNameInput.value = '';
+            channelGroupDescriptionInput.value = '';
+            channelGroupLinkInput.value = '';
+            channelGroupFormTitle.textContent = 'إضافة قناة/مجموعة جديدة';
+            addChannelGroupBtn.classList.remove('hidden');
+            updateChannelGroupBtn.classList.add('hidden');
+            cancelChannelGroupEditBtn.classList.add('hidden');
+        }
+
+        // ملء نموذج القنوات والمجموعات للتعديل
+        function populateChannelGroupEditForm(channelGroup) {
+            channelGroupFormTitle.textContent = 'تعديل قناة/مجموعة';
+            channelGroupDocIdInput.value = channelGroup.id;
+            channelGroupNameInput.value = channelGroup.name || '';
+            channelGroupDescriptionInput.value = channelGroup.description || '';
+            channelGroupLinkInput.value = channelGroup.link || '';
+            addChannelGroupBtn.classList.add('hidden');
+            updateChannelGroupBtn.classList.remove('hidden');
+            cancelChannelGroupEditBtn.classList.remove('hidden');
+        }
+
+        // جلب وعرض القنوات والمجموعات
+        async function fetchChannelsAndGroups() {
+            channelsGroupsDisplayDiv.innerHTML = '<div class="loading-text">جاري تحميل القنوات والمجموعات...</div>';
+            try {
+                if (!userId) {
+                    await signInAnonymously(auth);
+                    userId = auth.currentUser.uid;
+                }
+                const colRef = collection(db, 'channels_and_groups');
+                const q = query(colRef, orderBy('timestamp', 'desc'));
+                const snapshot = await getDocs(q);
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                channelsGroupsDisplayDiv.innerHTML = '';
+                if (data.length === 0) {
+                    channelsGroupsDisplayDiv.innerHTML = '<div class="text-center text-gray-500 py-4">لا توجد قنوات أو مجموعات حالياً.</div>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const el = document.createElement('div');
+                    el.classList.add('item-entry');
+                    el.innerHTML = `
+                        <div class="item-content">
+                            <div class="item-title">${item.name || ''}</div>
+                            <div class="item-description">${item.description || ''}</div>
+                            <div class="item-details"><a href="${item.link}" target="_blank" class="text-blue-500 hover:underline">الرابط</a></div>
+                        </div>
+                        <div class="item-actions flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
+                            <button class="btn btn-info edit-btn" data-id="${item.id}">تعديل</button>
+                            <button class="btn btn-danger delete-btn" data-id="${item.id}">حذف</button>
+                        </div>
+                    `;
+                    el.querySelector('.edit-btn').addEventListener('click', () => populateChannelGroupEditForm(item));
+                    el.querySelector('.delete-btn').addEventListener('click', () => deleteChannelGroup(item.id));
+                    channelsGroupsDisplayDiv.appendChild(el);
+                });
+            } catch (error) {
+                console.error("خطأ في جلب القنوات والمجموعات:", error);
+                showMessageBox('خطأ', 'فشل جلب القنوات والمجموعات: ' + error.message);
+            }
+        }
+
+        // إضافة قناة/مجموعة
+        async function addChannelGroup() {
+            const name = channelGroupNameInput.value.trim();
+            const description = channelGroupDescriptionInput.value.trim();
+            const link = channelGroupLinkInput.value.trim();
+
+            if (!name || !description || !link) {
+                showMessageBox('خطأ', 'الرجاء ملء جميع الحقول المطلوبة.');
+                return;
+            }
+
+            openCustomModal('تأكيد الإضافة', 'هل أنت متأكد من أنك تريد إضافة هذه القناة/المجموعة؟', async () => {
+                try {
+                    await addDoc(collection(db, 'channels_and_groups'), {
+                        name,
+                        description,
+                        link,
+                        timestamp: new Date()
+                    });
+                    showMessageBox('نجاح', 'تمت إضافة القناة/المجموعة بنجاح!');
+                    clearChannelGroupForm();
+                    fetchChannelsAndGroups();
+                } catch (error) {
+                    console.error("خطأ في إضافة القناة/المجموعة:", error);
+                    showMessageBox('خطأ', 'فشل إضافة القناة/المجموعة: ' + error.message);
+                }
+            });
+        }
+
+        // تحديث قناة/مجموعة
+        async function updateChannelGroup() {
+            const docId = channelGroupDocIdInput.value;
+            const name = channelGroupNameInput.value.trim();
+            const description = channelGroupDescriptionInput.value.trim();
+            const link = channelGroupLinkInput.value.trim();
+
+            if (!docId || !name || !description || !link) {
+                showMessageBox('خطأ', 'الرجاء ملء جميع الحقول المطلوبة ومعرف المستند.');
+                return;
+            }
+
+            openCustomModal('تأكيد التحديث', 'هل أنت متأكد من أنك تريد تحديث هذه القناة/المجموعة؟', async () => {
+                try {
+                    await updateDoc(doc(db, 'channels_and_groups', docId), {
+                        name,
+                        description,
+                        link
+                    });
+                    showMessageBox('نجاح', 'تم تحديث القناة/المجموعة بنجاح!');
+                    clearChannelGroupForm();
+                    fetchChannelsAndGroups();
+                } catch (error) {
+                    console.error("خطأ في تحديث القناة/المجموعة:", error);
+                    showMessageBox('خطأ', 'فشل تحديث القناة/المجموعة: ' + error.message);
+                }
+            });
+        }
+
+        // حذف قناة/مجموعة
+        async function deleteChannelGroup(docId) {
+            openCustomModal('تأكيد الحذف', 'هل أنت متأكد من أنك تريد حذف هذه القناة/المجموعة؟', async () => {
+                try {
+                    await deleteDoc(doc(db, 'channels_and_groups', docId));
+                    showMessageBox('نجاح', 'تم حذف القناة/المجموعة بنجاح!');
+                    fetchChannelsAndGroups();
+                } catch (error) {
+                    console.error("خطأ في حذف القناة/المجموعة:", error);
+                    showMessageBox('خطأ', 'فشل حذف القناة/المجموعة: ' + error.message);
+                }
+            });
+        }
+
+
+        // ===============================================
+        //           إدارة الألسنة (Tabs)
+        // ===============================================
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function activateTab(tabId) {
+            tabButtons.forEach(button => {
+                if (button.dataset.tab === tabId) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+
+            tabContents.forEach(content => {
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+
+            // تحديث البيانات عند تفعيل التبويب
+            if (tabId === 'notifications') {
+                fetchNotifications();
+                clearNotificationForm(); // مسح النموذج عند التبديل
+            } else if (tabId === 'lectures') {
+                fetchLectures();
+                clearLectureForm(); // مسح النموذج عند التبديل
+            } else if (tabId === 'channels_groups') {
+                fetchChannelsAndGroups();
+                clearChannelGroupForm(); // مسح النموذج عند التبديل
+            }
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                activateTab(button.dataset.tab);
+            });
         });
 
-        // ربط الأحداث عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            // ربط أحداث الأزرار
+
+        // ===============================================
+        //           تهيئة وتفعيل الأحداث عند التحميل
+        // ===============================================
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // المصادقة المجهولة عند تحميل الصفحة
+            try {
+                await signInAnonymously(auth);
+                userId = auth.currentUser.uid;
+                console.log("تم تسجيل الدخول كمستخدم مجهول. معرف المستخدم:", userId);
+            } catch (error) {
+                console.error("خطأ في المصادقة المجهولة:", error);
+                showMessageBox('خطأ في المصادقة', 'فشل تسجيل الدخول. بعض الوظائف قد لا تعمل.');
+            }
+
+            // ربط أحداث الإشعارات
             addNotificationBtn.addEventListener('click', addNotification);
             updateNotificationBtn.addEventListener('click', updateNotification);
-            cancelEditBtn.addEventListener('click', clearForm);
+            cancelNotificationEditBtn.addEventListener('click', clearNotificationForm);
 
-            // جلب الإشعارات عند تحميل الصفحة لأول مرة
-            fetchNotifications();
+            // ربط أحداث المحاضرات
+            addLectureBtn.addEventListener('click', addLecture);
+            updateLectureBtn.addEventListener('click', updateLecture);
+            cancelLectureEditBtn.addEventListener('click', clearLectureForm);
+
+            // ربط أحداث القنوات والمجموعات
+            addChannelGroupBtn.addEventListener('click', addChannelGroup);
+            updateChannelGroupBtn.addEventListener('click', updateChannelGroup);
+            cancelChannelGroupEditBtn.addEventListener('click', clearChannelGroupForm);
+
+            // تفعيل التبويب الافتراضي (الإشعارات) عند التحميل
+            activateTab('notifications');
         });
     </script>
 </body>
