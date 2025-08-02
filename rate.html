@@ -27,6 +27,11 @@
             background-color: #fee2e2; /* red-100 */
             color: #991b1b; /* red-800 */
         }
+        .featured-status {
+            background-color: #fffbeb; /* yellow-100 */
+            color: #92400e; /* yellow-800 */
+            border: 1px solid #fcd34d; /* yellow-400 */
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen text-right">
@@ -150,18 +155,23 @@
                 noReviewsMessage.classList.add('hidden');
                 reviews.forEach(review => {
                     const reviewElement = document.createElement('div');
-                    reviewElement.className = 'flex flex-col md:flex-row items-start md:items-center p-4 rounded-lg shadow-md bg-white border border-gray-200';
+                    // Add a class for featured reviews to make them visually distinct
+                    reviewElement.className = `flex flex-col md:flex-row items-start md:items-center p-4 rounded-lg shadow-md bg-white border border-gray-200 ${review.isFeatured ? 'featured-status' : ''}`;
                     reviewElement.innerHTML = `
                         <div class="flex-grow mb-4 md:mb-0">
                             <div class="flex items-center mb-2">
                                 <span class="font-bold text-lg text-gray-800">${review.name}</span>
                                 <span class="mr-4 text-xl font-bold text-purple-600">${review.rating} / 10</span>
+                                ${review.isFeatured ? '<span class="mr-2 text-yellow-600">★</span>' : ''}
                             </div>
                             <p class="text-gray-700">${review.comment}</p>
                         </div>
                         <div class="flex-shrink-0 flex space-x-2 space-x-reverse">
                             <button data-id="${review.id}" data-approved="${review.approved}" class="toggle-approved-btn px-4 py-2 rounded-lg text-sm font-semibold transition duration-200 ${review.approved ? 'approved-status' : 'not-approved-status'}">
                                 ${review.approved ? 'إخفاء' : 'إظهار'}
+                            </button>
+                            <button data-id="${review.id}" data-featured="${review.isFeatured || false}" class="toggle-featured-btn px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-semibold hover:bg-yellow-600 transition duration-200">
+                                ${review.isFeatured ? 'إزالة التمييز' : 'تمييز'}
                             </button>
                             <button data-id="${review.id}" data-name="${review.name}" data-rating="${review.rating}" data-comment="${review.comment}" class="edit-btn px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 transition duration-200">
                                 تعديل
@@ -178,6 +188,9 @@
             // Add event listeners to the new buttons
             document.querySelectorAll('.toggle-approved-btn').forEach(button => {
                 button.addEventListener('click', toggleApproved);
+            });
+            document.querySelectorAll('.toggle-featured-btn').forEach(button => {
+                button.addEventListener('click', toggleFeatured);
             });
             document.querySelectorAll('.edit-btn').forEach(button => {
                 button.addEventListener('click', showEditModal);
@@ -197,6 +210,19 @@
                 await updateDoc(reviewRef, { approved: !currentStatus });
             } catch (error) {
                 console.error("خطأ في تحديث حالة التقييم:", error);
+            }
+        }
+
+        // Function to toggle the featured status (new function)
+        async function toggleFeatured(e) {
+            const reviewId = e.target.dataset.id;
+            const currentStatus = e.target.dataset.featured === 'true';
+
+            try {
+                const reviewRef = doc(db, 'reviews', reviewId);
+                await updateDoc(reviewRef, { isFeatured: !currentStatus });
+            } catch (error) {
+                console.error("خطأ في تحديث حالة التمييز:", error);
             }
         }
         
