@@ -3,15 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة إدارة التقييمات</title>
-    <!-- تضمين Tailwind CSS -->
+    <title>مكتبة التحليلات والتقييمات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* الخطوط والأنماط الموحدة */
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Cairo', 'Inter', sans-serif;
             background-color: #f3f4f6;
         }
+
+        /* لنمط شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #9d17aa;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6d07ba;
+        }
+        
+        /* نمط مخصص لظل الـ header أكثر حدة */
+        .header-intense-shadow {
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* أنماط خاصة بالتقييمات */
         .container-bg {
             background-color: white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1-px rgba(0, 0, 0, 0.06);
@@ -34,39 +62,72 @@
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen text-right">
-
-    <!-- Header -->
-    <header class="p-4 bg-purple-900 text-white rounded-b-xl shadow-md">
-        <div class="flex justify-between items-center w-full h-full">
-            <span class="text-2xl font-bold">لوحة الإدارة</span>
-            <a href="#" class="inline-block px-4 py-2 text-white bg-purple-500 rounded-lg shadow-md hover:bg-purple-600 transition duration-300">
-                العودة للصفحة الرئيسية
+<body class="flex flex-col min-h-screen">
+    <header class="fixed top-0 right-0 left-0 z-50 bg-gradient-to-l from-[#d000fa] to-[#6d07ba] text-white p-4 text-center rounded-b-3xl header-intense-shadow">
+        <div class="max-w-2xl mx-auto w-full">
+            <a href="https://mogazy.github.io/Almaktba/rate.html" class="text-white text-lg font-bold">
+                العودة إلى الصفحة الرئيسية
             </a>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow p-4 md:p-6">
-        <div class="max-w-4xl mx-auto p-4 md:p-8 rounded-xl container-bg">
-            <h1 class="text-3xl font-extrabold mb-8 text-center text-gray-800">إدارة التقييمات</h1>
+    <div class="flex-grow p-4 md:p-6 pt-[6rem] max-w-4xl mx-auto w-full">
+        <div class="mb-6 flex justify-center space-x-4 space-x-reverse">
+            <button id="tab-analysis" class="px-6 py-2 rounded-full font-bold text-white bg-[#6d07ba] hover:bg-[#d000fa] transition-colors duration-300">إدارة التحليلات</button>
+            <button id="tab-reviews" class="px-6 py-2 rounded-full font-bold text-gray-700 bg-gray-300 hover:bg-gray-400 transition-colors duration-300">إدارة التقييمات</button>
+        </div>
 
-            <!-- Loading Spinner -->
+        <div id="content-analysis" class="tab-content max-w-2xl mx-auto w-full space-y-4">
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h2 id="form-title" class="text-2xl font-bold text-gray-800 mb-4">إضافة تحليل جديد</h2>
+                <form id="analysis-form" class="space-y-4">
+                    <div>
+                        <label for="analysisName" class="block text-sm font-medium text-gray-700">اسم التحليل</label>
+                        <input type="text" id="analysisName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="link" class="block text-sm font-medium text-gray-700">رابط التحليل</label>
+                        <input type="url" id="link" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700">التصنيف</label>
+                        <input type="text" id="category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="otherNames" class="block text-sm font-medium text-gray-700">أسماء أخرى (للبحث)</label>
+                        <input type="text" id="otherNames" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2">
+                    </div>
+                    <button type="submit" id="submit-btn" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#d000fa] hover:bg-[#a600d1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#d000fa] transition-colors duration-200">
+                        إضافة تحليل
+                    </button>
+                    <button type="button" id="cancel-btn" class="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 hidden">
+                        إلغاء التعديل
+                    </button>
+                </form>
+                <div id="status-message" class="mt-4 p-3 rounded-lg text-sm hidden"></div>
+            </div>
+
+            <div class="bg-white p-4 shadow-md border border-gray-200 flex-grow w-full rounded-lg">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">التحليلات الحالية</h2>
+                <div id="analysis-list" class="space-y-2">
+                    </div>
+            </div>
+        </div>
+
+        <div id="content-reviews" class="tab-content hidden max-w-4xl mx-auto p-4 md:p-8 rounded-xl container-bg">
+            <h1 class="text-3xl font-extrabold mb-8 text-center text-gray-800">إدارة التقييمات</h1>
             <div id="loadingSpinner" class="flex justify-center items-center h-48">
                 <svg class="animate-spin h-10 w-10 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
             </div>
-
-            <!-- List of Reviews -->
             <div id="reviewsList" class="hidden space-y-4">
                 <p id="noReviewsMessage" class="text-center text-gray-500">لا توجد تقييمات لإدارتها.</p>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- Edit Modal -->
     <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-bg">
         <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md mx-4">
             <h2 class="text-2xl font-bold mb-4 text-gray-800">تعديل التقييم</h2>
@@ -84,7 +145,7 @@
                     <label for="editComment" class="block text-lg font-medium text-gray-700">التعليق:</label>
                     <textarea id="editComment" rows="4" class="mt-1 block w-full rounded-md border-gray-500 shadow-sm focus:border-purple-500 focus:ring-purple-500 p-2"></textarea>
                 </div>
-                <div class="flex justify-end space-x-2">
+                <div class="flex justify-end space-x-2 space-x-reverse">
                     <button type="button" id="cancelEditButton" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">إلغاء</button>
                     <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">حفظ التغييرات</button>
                 </div>
@@ -92,39 +153,82 @@
         </div>
     </div>
 
-    <!-- Delete Modal -->
     <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-bg">
         <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm mx-4 text-center">
             <h2 class="text-2xl font-bold mb-4 text-gray-800">تأكيد الحذف</h2>
             <p class="mb-6 text-gray-700">هل أنت متأكد أنك تريد حذف هذا التقييم؟ لا يمكن التراجع عن هذا الإجراء.</p>
-            <div class="flex justify-center space-x-4">
+            <div class="flex justify-center space-x-4 space-x-reverse">
                 <button id="cancelDeleteButton" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">إلغاء</button>
                 <button id="confirmDeleteButton" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">حذف</button>
             </div>
         </div>
     </div>
+    
+    <div id="delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">تأكيد الحذف</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">هل أنت متأكد أنك تريد حذف هذا التحليل؟ لا يمكن التراجع عن هذا الإجراء.</p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="confirm-delete-btn" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200 sm:ml-3 sm:w-auto">
+                        تأكيد
+                    </button>
+                    <button id="cancel-delete-btn" class="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200 sm:mt-0 sm:w-auto">
+                        إلغاء
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- تضمين مكتبات Firebase اللازمة -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // تهيئة مشروع Firebase الخاص بك
+        // إعدادات Firebase التي تم توفيرها من قبل المستخدم (تم توحيدها)
         const firebaseConfig = {
             apiKey: "AIzaSyCWxQCNU-91cK2FwiL3zs1_bKO6LtJHTz4",
             authDomain: "rate-f04e2.firebaseapp.com",
             projectId: "rate-f04e2",
-            storageBucket: "rate-f04e2.firebase-app.com",
+            storageBucket: "rate-f04e2.firebasestorage.app",
             messagingSenderId: "236207388801",
-            appId: "1:236207388801:web:2274a016a6d2a5dee8f580",
-            measurementId: "G-WM812E8GPQ"
+            appId: "1:236207388801:web:f46bdea16a3f25d6e8f580", 
+            measurementId: "G-BGZWC1QQXK"
         };
+        
+        // متغيرات عامة سيتم توفيرها من بيئة Canvas
+        const firebaseConfigFromEnv = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // تهيئة Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        let app;
+        let auth;
+        let db;
+        let editingAnalysisId = null; 
+        let analysisToDeleteId = null; 
+        let reviewToDeleteId = null;
 
-        // UI Elements
+        // العناصر الخاصة بالتبويب
+        const tabAnalysis = document.getElementById('tab-analysis');
+        const tabReviews = document.getElementById('tab-reviews');
+        const contentAnalysis = document.getElementById('content-analysis');
+        const contentReviews = document.getElementById('content-reviews');
+        
+        // عناصر إدارة التحليلات
+        const analysisForm = document.getElementById('analysis-form');
+        const formTitle = document.getElementById('form-title');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const analysisStatusMessageEl = document.getElementById('status-message');
+        const analysisListEl = document.getElementById('analysis-list');
+        const deleteAnalysisModal = document.getElementById('delete-modal');
+        const confirmDeleteAnalysisBtn = document.getElementById('confirm-delete-btn');
+        const cancelDeleteAnalysisBtn = document.getElementById('cancel-delete-btn');
+
+        // عناصر إدارة التقييمات
         const loadingSpinner = document.getElementById('loadingSpinner');
         const reviewsListDiv = document.getElementById('reviewsList');
         const noReviewsMessage = document.getElementById('noReviewsMessage');
@@ -135,19 +239,257 @@
         const editRatingInput = document.getElementById('editRating');
         const editCommentInput = document.getElementById('editComment');
         const cancelEditButton = document.getElementById('cancelEditButton');
-        const deleteModal = document.getElementById('deleteModal');
-        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
-        const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+        const deleteReviewModal = document.getElementById('deleteModal');
+        const confirmDeleteReviewButton = document.getElementById('confirmDeleteButton');
+        const cancelDeleteReviewButton = document.getElementById('cancelDeleteButton');
 
-        let reviewToDeleteId = null;
+        // دالة لتبديل التبويبات
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
 
-        // مرجع لمجموعة 'reviews' في Firestore
-        const reviewsCollectionRef = collection(db, 'reviews');
+            document.querySelectorAll('button[id^="tab-"]').forEach(button => {
+                button.classList.remove('bg-[#6d07ba]', 'hover:bg-[#d000fa]', 'text-white');
+                button.classList.add('bg-gray-300', 'hover:bg-gray-400', 'text-gray-700');
+            });
 
-        // Function to render all reviews
-        function renderReviews(reviews) {
-            reviewsListDiv.innerHTML = ''; // Clear previous content
+            document.getElementById(`tab-${tabId}`).classList.remove('bg-gray-300', 'hover:bg-gray-400', 'text-gray-700');
+            document.getElementById(`tab-${tabId}`).classList.add('bg-[#6d07ba]', 'hover:bg-[#d000fa]', 'text-white');
             
+            // تهيئة كل تبويب عند التبديل إليه
+            if (tabId === 'reviews') {
+                initReviewsTab();
+            } else if (tabId === 'analysis') {
+                fetchAnalysisData();
+            }
+        }
+        
+        tabAnalysis.addEventListener('click', () => switchTab('analysis'));
+        tabReviews.addEventListener('click', () => switchTab('reviews'));
+
+        // --- وظائف إدارة التحليلات ---
+
+        // دالة لعرض رسالة حالة معينة للمستخدم
+        function showAnalysisStatusMessage(message, type = 'info') {
+            analysisStatusMessageEl.textContent = message;
+            analysisStatusMessageEl.classList.remove('hidden');
+            analysisStatusMessageEl.className = 'mt-4 p-3 rounded-lg text-sm';
+
+            switch(type) {
+                case 'success':
+                    analysisStatusMessageEl.classList.add('bg-green-100', 'text-green-800');
+                    break;
+                case 'error':
+                    analysisStatusMessageEl.classList.add('bg-red-100', 'text-red-800');
+                    break;
+                case 'info':
+                default:
+                    analysisStatusMessageEl.classList.add('bg-blue-100', 'text-blue-800');
+                    break;
+            }
+        }
+
+        // دالة لإخفاء رسالة الحالة
+        function hideAnalysisStatusMessage() {
+            analysisStatusMessageEl.classList.add('hidden');
+        }
+
+        const initializeFirebase = async () => {
+            try {
+                app = initializeApp(firebaseConfigFromEnv);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        console.log("تم توثيق المستخدم بنجاح. UID:", user.uid);
+                        fetchAnalysisData(); // جلب البيانات عند بدء التشغيل
+                    } else {
+                        console.log("المستخدم غير موثق، جارٍ تسجيل الدخول.");
+                        signInUser();
+                    }
+                });
+            } catch (error) {
+                console.error("خطأ في تهيئة Firebase:", error);
+                showAnalysisStatusMessage(`خطأ في تهيئة Firebase: ${error.message}`, 'error');
+            }
+        };
+
+        const signInUser = async () => {
+            showAnalysisStatusMessage('جارٍ تسجيل الدخول...');
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("خطأ في تسجيل الدخول:", error);
+                showAnalysisStatusMessage(`خطأ في تسجيل الدخول: ${error.message}. يرجى التحقق من إعدادات التوثيق في Firebase.`, 'error');
+            }
+        };
+        
+        async function fetchAnalysisData() {
+            analysisListEl.innerHTML = '<p class="text-center text-gray-500">جارٍ تحميل البيانات...</p>';
+            try {
+                const analysisCollectionRef = collection(db, 'analysis');
+                const querySnapshot = await getDocs(analysisCollectionRef);
+
+                const analyses = [];
+                querySnapshot.forEach((doc) => {
+                    analyses.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                displayAnalysisData(analyses);
+            } catch (error) {
+                console.error("خطأ في جلب البيانات:", error);
+                analysisListEl.innerHTML = `<p class="text-red-500 text-center">حدث خطأ: ${error.message}.</p>`;
+            }
+        }
+
+        function displayAnalysisData(analyses) {
+            analysisListEl.innerHTML = '';
+            if (analyses.length === 0) {
+                analysisListEl.innerHTML = `<p class="text-center text-gray-500">لا توجد تحليلات لعرضها حاليًا.</p>`;
+                return;
+            }
+            analyses.forEach((analysis, index) => {
+                const bgColorClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-100';
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `flex items-center justify-between ${bgColorClass} p-4 rounded-lg shadow-sm border border-gray-200`;
+                itemDiv.innerHTML = `
+                    <p class="text-lg font-medium text-gray-800">${analysis.analysisName}</p>
+                    <div class="flex space-x-2 space-x-reverse">
+                        <button class="edit-btn text-blue-600 hover:text-blue-800 transition-colors duration-200" data-id="${analysis.id}">تعديل</button>
+                        <button class="delete-btn text-red-600 hover:text-red-800 transition-colors duration-200" data-id="${analysis.id}">حذف</button>
+                    </div>
+                `;
+                analysisListEl.appendChild(itemDiv);
+            });
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => startEdit(e.target.dataset.id));
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => showDeleteAnalysisModal(e.target.dataset.id));
+            });
+        }
+        
+        analysisForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAnalysisStatusMessage();
+            const analysisName = document.getElementById('analysisName').value;
+            const link = document.getElementById('link').value;
+            const category = document.getElementById('category').value;
+            const otherNames = document.getElementById('otherNames').value;
+            const analysisData = { analysisName, link, category, otherNames };
+
+            try {
+                if (editingAnalysisId) {
+                    const analysisDocRef = doc(db, 'analysis', editingAnalysisId);
+                    await updateDoc(analysisDocRef, analysisData);
+                    showAnalysisStatusMessage('تم تعديل التحليل بنجاح.', 'success');
+                } else {
+                    await addDoc(collection(db, 'analysis'), analysisData);
+                    showAnalysisStatusMessage('تم إضافة التحليل بنجاح.', 'success');
+                }
+                analysisForm.reset();
+                editingAnalysisId = null;
+                formTitle.textContent = 'إضافة تحليل جديد';
+                submitBtn.textContent = 'إضافة تحليل';
+                cancelBtn.classList.add('hidden');
+                fetchAnalysisData(); 
+            } catch (error) {
+                console.error("خطأ في حفظ البيانات:", error);
+                showAnalysisStatusMessage(`حدث خطأ أثناء حفظ البيانات: ${error.message}.`, 'error');
+            }
+        });
+
+        async function startEdit(id) {
+            try {
+                const analysisCollectionRef = collection(db, 'analysis');
+                const querySnapshot = await getDocs(analysisCollectionRef);
+                const docToEdit = querySnapshot.docs.find(doc => doc.id === id);
+                if (docToEdit) {
+                    const data = docToEdit.data();
+                    document.getElementById('analysisName').value = data.analysisName || '';
+                    document.getElementById('link').value = data.link || '';
+                    document.getElementById('category').value = data.category || '';
+                    document.getElementById('otherNames').value = data.otherNames || '';
+                    editingAnalysisId = id;
+                    formTitle.textContent = 'تعديل التحليل';
+                    submitBtn.textContent = 'حفظ التعديلات';
+                    cancelBtn.classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showAnalysisStatusMessage('التحليل المراد تعديله غير موجود.', 'error');
+                }
+            } catch (error) {
+                console.error("خطأ في جلب البيانات للتعديل:", error);
+                showAnalysisStatusMessage(`حدث خطأ أثناء جلب بيانات التحليل: ${error.message}.`, 'error');
+            }
+        }
+
+        cancelBtn.addEventListener('click', () => {
+            analysisForm.reset();
+            editingAnalysisId = null;
+            formTitle.textContent = 'إضافة تحليل جديد';
+            submitBtn.textContent = 'إضافة تحليل';
+            cancelBtn.classList.add('hidden');
+            hideAnalysisStatusMessage();
+        });
+
+        function showDeleteAnalysisModal(id) {
+            analysisToDeleteId = id;
+            deleteAnalysisModal.classList.remove('hidden');
+        }
+
+        cancelDeleteAnalysisBtn.addEventListener('click', () => {
+            deleteAnalysisModal.classList.add('hidden');
+            analysisToDeleteId = null;
+        });
+
+        confirmDeleteAnalysisBtn.addEventListener('click', async () => {
+            deleteAnalysisModal.classList.add('hidden');
+            if (analysisToDeleteId) {
+                try {
+                    const analysisDocRef = doc(db, 'analysis', analysisToDeleteId);
+                    await deleteDoc(analysisDocRef);
+                    showAnalysisStatusMessage('تم حذف التحليل بنجاح.', 'success');
+                    fetchAnalysisData(); 
+                } catch (error) {
+                    console.error("خطأ في حذف البيانات:", error);
+                    showAnalysisStatusMessage(`حدث خطأ أثناء حذف التحليل: ${error.message}.`, 'error');
+                } finally {
+                    analysisToDeleteId = null;
+                }
+            }
+        });
+
+        // --- وظائف إدارة التقييمات ---
+        const initReviewsTab = () => {
+            if (!db) {
+                console.error("Firestore is not initialized.");
+                return;
+            }
+            const reviewsCollectionRef = collection(db, 'reviews');
+            onSnapshot(reviewsCollectionRef, (snapshot) => {
+                const reviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderReviews(reviews);
+                loadingSpinner.classList.add('hidden');
+                reviewsListDiv.classList.remove('hidden');
+            }, (error) => {
+                console.error("خطأ في جلب بيانات التقييمات:", error);
+                loadingSpinner.classList.add('hidden');
+                reviewsListDiv.classList.remove('hidden');
+                reviewsListDiv.textContent = 'حدث خطأ في جلب البيانات. يرجى إعادة تحميل الصفحة.';
+            });
+        }
+        
+        function renderReviews(reviews) {
+            reviewsListDiv.innerHTML = '';
             if (reviews.length === 0) {
                 noReviewsMessage.classList.remove('hidden');
                 reviewsListDiv.appendChild(noReviewsMessage);
@@ -155,7 +497,6 @@
                 noReviewsMessage.classList.add('hidden');
                 reviews.forEach(review => {
                     const reviewElement = document.createElement('div');
-                    // Add a class for featured reviews to make them visually distinct
                     reviewElement.className = `flex flex-col md:flex-row items-start md:items-center p-4 rounded-lg shadow-md bg-white border border-gray-200 ${review.isFeatured ? 'featured-status' : ''}`;
                     reviewElement.innerHTML = `
                         <div class="flex-grow mb-4 md:mb-0">
@@ -185,26 +526,15 @@
                 });
             }
 
-            // Add event listeners to the new buttons
-            document.querySelectorAll('.toggle-approved-btn').forEach(button => {
-                button.addEventListener('click', toggleApproved);
-            });
-            document.querySelectorAll('.toggle-featured-btn').forEach(button => {
-                button.addEventListener('click', toggleFeatured);
-            });
-            document.querySelectorAll('.edit-btn').forEach(button => {
-                button.addEventListener('click', showEditModal);
-            });
-            document.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', showDeleteModal);
-            });
+            document.querySelectorAll('.toggle-approved-btn').forEach(button => { button.addEventListener('click', toggleApproved); });
+            document.querySelectorAll('.toggle-featured-btn').forEach(button => { button.addEventListener('click', toggleFeatured); });
+            document.querySelectorAll('.edit-btn').forEach(button => { button.addEventListener('click', showEditModal); });
+            document.querySelectorAll('.delete-btn').forEach(button => { button.addEventListener('click', showDeleteReviewModal); });
         }
         
-        // Function to toggle the approved status
         async function toggleApproved(e) {
             const reviewId = e.target.dataset.id;
             const currentStatus = e.target.dataset.approved === 'true';
-            
             try {
                 const reviewRef = doc(db, 'reviews', reviewId);
                 await updateDoc(reviewRef, { approved: !currentStatus });
@@ -213,11 +543,9 @@
             }
         }
 
-        // Function to toggle the featured status (new function)
         async function toggleFeatured(e) {
             const reviewId = e.target.dataset.id;
             const currentStatus = e.target.dataset.featured === 'true';
-
             try {
                 const reviewRef = doc(db, 'reviews', reviewId);
                 await updateDoc(reviewRef, { isFeatured: !currentStatus });
@@ -226,7 +554,6 @@
             }
         }
         
-        // Function to show the edit modal
         function showEditModal(e) {
             const button = e.target;
             const reviewId = button.dataset.id;
@@ -242,7 +569,6 @@
             editModal.classList.remove('hidden');
         }
         
-        // Function to handle edit form submission
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const reviewId = editReviewIdInput.value;
@@ -251,64 +577,44 @@
             const newComment = editCommentInput.value.trim();
             
             if (!newName || isNaN(newRating) || newRating < 1 || newRating > 10) {
-                // In a real app, you would show an error message
                 console.error("بيانات غير صالحة للتعديل.");
                 return;
             }
             
             try {
                 const reviewRef = doc(db, 'reviews', reviewId);
-                await updateDoc(reviewRef, {
-                    name: newName,
-                    rating: newRating,
-                    comment: newComment
-                });
+                await updateDoc(reviewRef, { name: newName, rating: newRating, comment: newComment });
                 editModal.classList.add('hidden');
             } catch (error) {
                 console.error("خطأ في تحديث التقييم:", error);
             }
         });
 
-        // Function to show the delete modal
-        function showDeleteModal(e) {
+        function showDeleteReviewModal(e) {
             reviewToDeleteId = e.target.dataset.id;
-            deleteModal.classList.remove('hidden');
+            deleteReviewModal.classList.remove('hidden');
         }
         
-        // Function to handle delete confirmation
         async function deleteReview() {
             if (reviewToDeleteId) {
                 try {
                     await deleteDoc(doc(db, 'reviews', reviewToDeleteId));
-                    deleteModal.classList.add('hidden');
+                    deleteReviewModal.classList.add('hidden');
                 } catch (error) {
                     console.error("خطأ في حذف التقييم:", error);
                 }
             }
         }
         
-        // Event listeners for modals
         cancelEditButton.addEventListener('click', () => editModal.classList.add('hidden'));
-        cancelDeleteButton.addEventListener('click', () => deleteModal.classList.add('hidden'));
-        confirmDeleteButton.addEventListener('click', deleteReview);
+        cancelDeleteReviewButton.addEventListener('click', () => deleteReviewModal.classList.add('hidden'));
+        confirmDeleteReviewButton.addEventListener('click', deleteReview);
 
-        // Main initialization function
-        async function initApp() {
-            // الاستماع إلى جميع التغييرات في مجموعة 'reviews'
-            onSnapshot(reviewsCollectionRef, (snapshot) => {
-                const reviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderReviews(reviews);
-                loadingSpinner.classList.add('hidden');
-                reviewsListDiv.classList.remove('hidden');
-            }, (error) => {
-                console.error("خطأ في جلب البيانات:", error);
-                loadingSpinner.classList.add('hidden');
-                reviewsListDiv.classList.remove('hidden');
-                reviewsListDiv.textContent = 'حدث خطأ في جلب البيانات. يرجى إعادة تحميل الصفحة.';
-            });
-        }
-        
-        window.addEventListener('load', initApp);
+        // --- تهيئة التطبيق عند التحميل ---
+        window.addEventListener('load', () => {
+            initializeFirebase();
+            switchTab('analysis');
+        });
     </script>
 </body>
 </html>
